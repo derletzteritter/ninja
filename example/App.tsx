@@ -7,9 +7,9 @@ export const App = () => {
   return (
     <div>
       <Ninja>
-        <div stepName="email">Orgnumber</div>
-        <div stepName="lookup">Lookup</div>
-        <div stepName="verification">Verfiy</div>
+        <div stepname="email">Orgnumber</div>
+        <div stepname="lookup">Lookup</div>
+        <div stepname="verification">Verfiy</div>
       </Ninja>
       <button onClick={previousStep}>Prev</button>
       <button onClick={nextStep}>Next</button>

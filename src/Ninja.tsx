@@ -7,18 +7,19 @@ export const Ninja: React.FC<NinjaProps> = ({ children }) => {
 
   const getChildren = useCallback(() => {
     return Children.toArray(children);
-  }, [children]);
+  }, []);
 
   useEffect(() => {
-    const steps = getChildren();
+    const steps: any = getChildren();
+    console.log('rerender');
+    setSteps(steps);
 
-    steps.forEach((step: any, i) => {
-      setSteps((curVal) => [...curVal, { id: i }]);
-      if (step.props && step.props.stepName) {
-        setNamedSteps((currVal) => [...currVal, { id: i, name: step.props.stepName ?? '' }]);
+    steps.forEach((step: any, i: number) => {
+      if (step.props && step.props.stepname) {
+        setNamedSteps((currVal) => [...currVal, { id: i, name: step.props.stepname ?? '' }]);
       }
     });
-  }, []);
+  }, [getChildren, setNamedSteps, setSteps]);
 
   return (
     <>
