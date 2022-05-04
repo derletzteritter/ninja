@@ -1,32 +1,55 @@
-import React, {Children, createContext, useCallback, useEffect, useMemo, useState} from "react";
-import {NinjaContextProps, NinjaProviderProps} from "../types/Context";
-
-const defaultState: NinjaContextProps = {
-	currentNameStep: "",
-	currentStep: 0,
-	totalSteps: 0
-}
-
-export const NinjaConext = createContext<NinjaContextProps>(defaultState);
+import React, {createContext, useContext, useState} from "react";
+import {NamedNinjaStep, NinjaContextProps, NinjaProviderProps, NinjaStep, NinjaStepContext} from "../types/Context";
+export const NinjaContext = createContext<NinjaContextProps>(null);
 
 
 export const NinjaProvider: React.FC<NinjaProviderProps> = ({children}) => {
-	const [currentNameStep, setCurrentNameStep] = useState<string>('');
+	const [steps, setSteps] = useState<NinjaStep[]>([]);
+	const [namedSteps, setNamedSteps] = useState<NamedNinjaStep[]>([]);
 	const [currentStep, setCurrentStep] = useState<number>(0);
-	const [totalSteps, setTotalSteps] = useState<number>(0);
 	
-	const getChildren = useMemo(() => Children.toArray(children), [children]);
+	
+	const nextStep = () => {
+		if (currentStep + 1 === steps.length) return;
+		setCurrentStep((currStep) => currStep + 1);
+	}
+	
+	const previousStep = () => {
+		if (currentStep === 0) return;
+		setCurrentStep((currStep) => currStep - 1);
+	}
+	
+	const toStepByName = (name: string) => {
+		const targetStep = namedSteps.find((step) => step.name === name)
+		setCurrentStep(targetStep.id);
+	}
+	
+	const toStep = (id: number) => {
+		setCurrentStep(id);
+	}
 	
 	const value: NinjaContextProps = {
-		currentNameStep,
-		totalSteps,
-		currentStep
+		steps,
+		setSteps,
+		namedSteps,
+		setNamedSteps,
+		currentStep,
+		setCurrentStep,
+		nextStep,
+		previousStep,
+		toStep,
+		toStepByName,
 	}
 	
 	return (
-		<NinjaConext.Provider value={value}>
+		<NinjaContext.Provider value={value}>
 			{children}
-		</NinjaConext.Provider>
+		</NinjaContext.Provider>
 	)
-	
+}
+
+export const useNinjaContext = () => useContext<NinjaContextProps>(NinjaContext);
+export const useNinjaSteps = (): NinjaStepContext => {
+	const { nextStep, previousStep, toStep, toStepByName } = useNinjaContext();
+	return { nextStep, previousStep, toStep, toStepByName }
 }
